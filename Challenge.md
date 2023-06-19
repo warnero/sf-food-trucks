@@ -25,7 +25,8 @@ Ultimately I went with the last one because I wasn't sure if I could get the loc
 ## Dev Journal
 - Setup basic app
 - Ran `mix phx.gen.auth`
-- Tried to create a new user and got an error rendering
+- Tried to create a new user and got an error rendering the register page (along with all the other generated auth pages)
+  - `key :name not found in: %{label: "Email", type: "email", prompt: nil, field: %Phoenix.HTML.FormField{id: "user_email", name: "user[email]"`
 - Ultimately had to fix all of the generated auth pages
   - From `{@form[:email]}`
   - To `{{@form, :email}}`
@@ -35,4 +36,7 @@ Ultimately I went with the last one because I wasn't sure if I could get the loc
 - Figure out how to parse and make the json into a seed data packet
   - Got all the data inserted after some messing around with missing fields (like `fooditems` and `dayshours`) and converting `status` to its `Ecto.Enum` equivalents
 - Now to make the rating stuff
-- First we need a basic view for all the food trucks
+- First we need a basic view for all the food trucks - generated using `mix phx.gen.live FoodTrucks FoodTruck food_trucks`
+  - Added in columns we want to show
+- Now we need a new schema for rating a food truck
+  - `mix phx.gen.schema FoodTruckRating food_truck_ratings`
