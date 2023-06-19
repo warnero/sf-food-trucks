@@ -1,4 +1,4 @@
-defmodule SfFoodTrucks.FoodTruck do
+defmodule SfFoodTrucks.FoodTrucks.FoodTruck do
   use Ecto.Schema
   import Ecto.Changeset
 
