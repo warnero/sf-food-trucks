@@ -13,6 +13,7 @@ config :sf_food_trucks, SfFoodTrucks.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "sf_food_trucks_test#{System.get_env("MIX_TEST_PARTITION")}",
+  port: 15432,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 

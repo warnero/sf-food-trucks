@@ -40,3 +40,43 @@ Ultimately I went with the last one because I wasn't sure if I could get the loc
   - Added in columns we want to show
 - Now we need a new schema for rating a food truck
   - `mix phx.gen.schema FoodTruckRating food_truck_ratings`
+  - added migration with a unique index on `user_id` and `food_truck_id` so that a user may only rate a food truck once
+  - added new relationships to User and FoodTruck schemas
+- Modify form modal to change/create a new food truck rating
+- Modify listing page to show aggregate rating (and how many ratings)
+- Tests
+  - Remove tests that are unneeded
+  - Had to see what was up with all of my `auth` tests
+    - Found out that I had generated a bad version of my auth live views due to the fact of using a RC version in generation vs. 1.7.6
+    - Regenerated everything clean and copied over the new CoreComponents and all the auth live views
+  - Add in new tests
+    - Liveview tests
+    - Rating creation test
+- Cleanup
+  - Remove unused generated code
+  - `mix format`
+
+## Usage
+- `asdf install` to get the current version of elixir (It should probably work with earlier too)
+- `mix deps.get`
+- Modify `config\dev.exs` to point to your instance of PostgreSQL
+- `mix ecto.create`
+- `mix ecto.migrate`
+- `mix run priv/repo/seeds.exs` to populate your food trucks
+- `mix phx.server`
+- Go to http://localhost:4000 and click "Register" to create a new user to log in with
+- Login and then click on "View and Rate Food Trucks"
+- Now you can see a list of food trucks and click on rate to give each one a rating from 1 - 5
+
+## Description
+For the rating I have a table that stores each user's rating for the food truck. When it pulls this from the database it uses a virtual field to calculate the total number of ratings as well as the average.
+
+## Future Todos (If I had more time! :P)
+- The food truck listing page doesn't refresh properly when you rate a food truck, so you have to reload manually
+- The home page is still stock Phoenix
+- I'd like to just redirect users to `/food_trucks` after logging in
+- More tests
+- Figure out a good way to connect it to the live data and have it sync the two
+- Add in a map so you could see where the food trucks were
+- Fix the ratings precision 
+  - I tried a few things that just didn't work and I didn't want to spend too much time trying to get it right

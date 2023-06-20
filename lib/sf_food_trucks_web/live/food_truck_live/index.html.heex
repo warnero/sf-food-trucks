@@ -1,45 +1,36 @@
 <.header>
   Listing Food trucks
-  <:actions>
-    <.link patch={~p"/food_trucks/new"}>
-      <.button>New Food truck</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <.table
   id="food_trucks"
   rows={@streams.food_trucks}
-  row_click={fn {_id, food_truck} -> JS.navigate(~p"/food_trucks/#{food_truck}") end}
+  row_click={fn {_id, food_truck} -> JS.navigate(~p"/food_trucks/#{food_truck}/rate") end}
 >
   <:col :let={{_id, food_truck}} label="Name"><%= food_truck.applicant %></:col>
   <:col :let={{_id, food_truck}} label="Type"><%= food_truck.facility_type %></:col>
   <:col :let={{_id, food_truck}} label="Status"><%= food_truck.status %></:col>
   <:col :let={{_id, food_truck}} label="Food"><%= food_truck.food_items %></:col>
   <:col :let={{_id, food_truck}} label="Hours"><%= food_truck.days_hours %></:col>
+  <:col :let={{_id, food_truck}} label="Average Rating"><%= food_truck.avg_rating %></:col>
+  <:col :let={{_id, food_truck}} label="Total Ratings"><%= food_truck.total_ratings %></:col>
   <:action :let={{_id, food_truck}}>
-    <div class="sr-only">
-      <.link navigate={~p"/food_trucks/#{food_truck}"}>Show</.link>
-    </div>
-    <.link patch={~p"/food_trucks/#{food_truck}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, food_truck}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: food_truck.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
-    </.link>
+    <.link patch={~p"/food_trucks/#{food_truck}/rate"}>Rate</.link>
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="food_truck-modal" show on_cancel={JS.patch(~p"/food_trucks")}>
+<.modal
+  :if={@live_action in [:rate]}
+  id="food_truck-modal"
+  show
+  on_cancel={JS.patch(~p"/food_trucks")}
+>
   <.live_component
     module={SfFoodTrucksWeb.FoodTruckLive.FormComponent}
-    id={@food_truck.id || :new}
+    id={@food_truck_rating.food_truck_id}
     title={@page_title}
     action={@live_action}
-    food_truck={@food_truck}
+    food_truck_rating={@food_truck_rating}
     patch={~p"/food_trucks"}
   />
 </.modal>

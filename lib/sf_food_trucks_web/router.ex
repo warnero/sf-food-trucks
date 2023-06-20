@@ -70,12 +70,7 @@ defmodule SfFoodTrucksWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       live "/food_trucks", FoodTruckLive.Index, :index
-      live "/food_trucks/new", FoodTruckLive.Index, :new
-      live "/food_trucks/:id/edit", FoodTruckLive.Index, :edit
-
-      live "/food_trucks/:id", FoodTruckLive.Show, :show
-      live "/food_trucks/:id/show/edit", FoodTruckLive.Show, :edit
-
+      live "/food_trucks/:id/rate", FoodTruckLive.Index, :rate
     end
   end
 

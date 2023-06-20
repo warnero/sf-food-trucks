@@ -2,6 +2,8 @@ defmodule SfFoodTrucks.FoodTrucks.FoodTruck do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias SfFoodTrucks.FoodTrucks
+
   schema "food_trucks" do
     field :locationid, :string
     field :applicant, :string
@@ -11,6 +13,10 @@ defmodule SfFoodTrucks.FoodTrucks.FoodTruck do
     field :latitude, :float
     field :longitude, :float
     field :days_hours, :string
+    field :avg_rating, :integer, virtual: true
+    field :total_ratings, :integer, virtual: true
+
+    has_many :ratings, FoodTrucks.FoodTruckRating
 
     timestamps()
   end

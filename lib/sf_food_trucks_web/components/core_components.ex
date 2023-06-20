@@ -650,9 +650,9 @@ defmodule SfFoodTrucksWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(HelloWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(SfFoodTrucksWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(HelloWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(SfFoodTrucksWeb.Gettext, "errors", msg, opts)
     end
   end
 

@@ -7,6 +7,7 @@ defmodule SfFoodTrucks.FoodTrucks do
   alias SfFoodTrucks.Repo
 
   alias SfFoodTrucks.FoodTrucks.FoodTruck
+  alias SfFoodTrucks.FoodTrucks.FoodTruckRating
 
   @doc """
   Returns the list of food_trucks.
@@ -18,7 +19,23 @@ defmodule SfFoodTrucks.FoodTrucks do
 
   """
   def list_food_trucks do
-    Repo.all(FoodTruck)
+    query =
+      from ft in FoodTruck,
+        left_join: r in subquery(ratings()),
+        on: ft.id == r.food_truck_id,
+        select_merge: %{avg_rating: r.avg_rating, total_ratings: r.total_ratings}
+
+    Repo.all(query)
+  end
+
+  defp ratings() do
+    from r in FoodTruckRating,
+      select: %{
+        food_truck_id: r.food_truck_id,
+        avg_rating: avg(r.rating),
+        total_ratings: count(r)
+      },
+      group_by: [r.food_truck_id, r.id]
   end
 
   @doc """
@@ -37,68 +54,25 @@ defmodule SfFoodTrucks.FoodTrucks do
   """
   def get_food_truck!(id), do: Repo.get!(FoodTruck, id)
 
-  @doc """
-  Creates a food_truck.
-
-  ## Examples
-
-      iex> create_food_truck(%{field: value})
-      {:ok, %FoodTruck{}}
-
-      iex> create_food_truck(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_food_truck(attrs \\ %{}) do
-    %FoodTruck{}
-    |> FoodTruck.changeset(attrs)
-    |> Repo.insert()
+  def get_food_truck_rating(food_truck_id, user_id) do
+    Repo.one(
+      from r in FoodTruckRating,
+        where:
+          r.user_id == ^user_id and
+            r.food_truck_id == ^food_truck_id
+    )
+    |> update_or_new_rating(user_id, food_truck_id)
   end
 
-  @doc """
-  Updates a food_truck.
+  def change_food_truck_rating(rating, attrs \\ %{}), do: FoodTruckRating.changeset(rating, attrs)
 
-  ## Examples
-
-      iex> update_food_truck(food_truck, %{field: new_value})
-      {:ok, %FoodTruck{}}
-
-      iex> update_food_truck(food_truck, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_food_truck(%FoodTruck{} = food_truck, attrs) do
-    food_truck
-    |> FoodTruck.changeset(attrs)
-    |> Repo.update()
+  def save_or_update_food_truck_rating(rating, attrs \\ %{}) do
+    change_food_truck_rating(rating, attrs)
+    |> Repo.insert_or_update()
   end
 
-  @doc """
-  Deletes a food_truck.
+  def update_or_new_rating(nil, user_id, food_truck_id),
+    do: %FoodTruckRating{user_id: user_id, food_truck_id: food_truck_id}
 
-  ## Examples
-
-      iex> delete_food_truck(food_truck)
-      {:ok, %FoodTruck{}}
-
-      iex> delete_food_truck(food_truck)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_food_truck(%FoodTruck{} = food_truck) do
-    Repo.delete(food_truck)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking food_truck changes.
-
-  ## Examples
-
-      iex> change_food_truck(food_truck)
-      %Ecto.Changeset{data: %FoodTruck{}}
-
-  """
-  def change_food_truck(%FoodTruck{} = food_truck, attrs \\ %{}) do
-    FoodTruck.changeset(food_truck, attrs)
-  end
+  def update_or_new_rating(rating, _user_id, _food_truck_id), do: rating
 end

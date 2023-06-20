@@ -29,7 +29,6 @@ defmodule FoodTruckDataFromJson do
          {:ok, latitude} <- fetch_in(truck_data, ["latitude"]),
          {:ok, longitude} <- fetch_in(truck_data, ["longitude"]),
          {:ok, days_hours} <- fetch_in(truck_data, ["dayshours"]) do
-
       enum_status =
         case status do
           "APPROVED" -> :approved
@@ -40,7 +39,8 @@ defmodule FoodTruckDataFromJson do
         end
 
       {latitude, _} = Float.parse(latitude)
-        {longitude, _} = Float.parse(longitude)
+      {longitude, _} = Float.parse(longitude)
+
       %SfFoodTrucks.FoodTruck{
         locationid: locationid,
         applicant: applicant,
